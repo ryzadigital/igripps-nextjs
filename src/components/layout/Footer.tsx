@@ -47,7 +47,7 @@ export function Footer() {
           {/* Brand Logo - Center */}
           <div className="flex justify-center">
             <Image
-              src="/iGripps.svg"
+              src="/igripps.svg"
               alt="iGripps Logo"
               width={150}
               height={150}
