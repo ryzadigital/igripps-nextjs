@@ -29,10 +29,24 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'iGripps - Custom Football Socks',
     description: 'Premium custom football socks for football clubs, Sydney, low minumum order, fast turnaround.',
-    url: 'https://igripps.com',
+    url: '/', // This will resolve relative to your current domain, whether Vercel or .com.au
     siteName: 'iGripps',
     type: 'website',
     locale: 'en_AU',
+    images: [
+      {
+        url: '/igripps-preview.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'iGripps branded grip socks preview image',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'iGripps - Custom Football Socks',
+    description: 'Premium custom football socks for football clubs, Sydney, low minumum order, fast turnaround.',
+    images: ['/igripps-preview.jpg'],
   },
 };
 
