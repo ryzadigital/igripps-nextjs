@@ -1,31 +1,26 @@
-// src/components/forms/ContactForm.tsx
 'use client';
 import React, { useState, useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
-import { Send, CheckCircle } from 'lucide-react';
+import { useSearchParams, useRouter } from 'next/navigation';
+import { Send, CheckCircle, AlertTriangle, Loader2, Home } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Card, CardContent } from '@/components/ui/Card';
 
 export function ContactForm() {
   const searchParams = useSearchParams();
-  
-  // Get initial subject from URL parameter
+  const router = useRouter();
+
   const getInitialSubject = () => {
     const urlSubject = searchParams.get('subject')?.toLowerCase();
-  
     if (!urlSubject) return 'general';
-  
     if (urlSubject.includes('quote')) return 'quote';
     if (urlSubject.includes('sample')) return 'sample';
     if (urlSubject.includes('bulk')) return 'bulk';
     if (urlSubject.includes('partner')) return 'partnership';
     if (urlSubject.includes('support')) return 'support';
-  
     return 'general';
   };
 
-  // Get initial message from URL parameter
   const getInitialMessage = () => {
     const urlMessage = searchParams.get('message');
     return urlMessage ? decodeURIComponent(urlMessage) : '';
@@ -39,15 +34,16 @@ export function ContactForm() {
     subject: getInitialSubject(),
     message: getInitialMessage(),
   });
-  const [isSubmitted, setIsSubmitted] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Update subject and message when URL changes
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+
   useEffect(() => {
     const newSubject = getInitialSubject();
     const newMessage = getInitialMessage();
-    setFormData(prev => ({ 
-      ...prev, 
+    setFormData(prev => ({
+      ...prev,
       subject: newSubject,
       message: newMessage
     }));
@@ -65,12 +61,30 @@ export function ContactForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    setIsSubmitted(true);
-    setIsSubmitting(false);
+    setErrorMessage('');
+
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data?.error || 'Unknown error occurred');
+      }
+
+      setIsSubmitted(true);
+    } catch (err: any) {
+      setErrorMessage(err.message);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleGoHome = () => {
+    router.push('/');
   };
 
   if (isSubmitted) {
@@ -82,12 +96,18 @@ export function ContactForm() {
             Message Sent Successfully!
           </h3>
           <p className="text-muted mb-6">
-            Thanks for contacting us! We'll get back to you within 2 business hours.
-            A confirmation has been sent to {formData.email}.
+            Thanks for contacting us! We'll get back to you as soon as possible. A confirmation has been
+            sent to {formData.email}.
           </p>
-          <Button onClick={() => setIsSubmitted(false)}>
-            Send Another Message
-          </Button>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Button onClick={() => setIsSubmitted(false)} variant="outline">
+              Send Another Message
+            </Button>
+            <Button onClick={handleGoHome} className="flex items-center gap-2">
+              <Home className="h-4 w-4" />
+              Take Me Home
+            </Button>
+          </div>
         </CardContent>
       </Card>
     );
@@ -96,88 +116,112 @@ export function ContactForm() {
   return (
     <Card>
       <CardContent className="p-6">
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <Input
-              label="Your Name *"
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              required
-            />
-            
-            <Input
-              label="Club/Organisation"
-              value={formData.club}
-              onChange={(e) => setFormData({ ...formData, club: e.target.value })}
-              placeholder="Optional"
-            />
+        {/* Loading Overlay */}
+        {isSubmitting && (
+          <div className="absolute inset-0 bg-white/80 backdrop-blur-sm flex items-center justify-center z-10 rounded-lg">
+            <div className="flex flex-col items-center gap-3">
+              <Loader2 className="h-8 w-8 animate-spin text-accent" />
+              <p className="text-sm font-medium text-secondary">Sending message...</p>
+              <p className="text-xs text-muted">Do not close this page!</p>
+            </div>
           </div>
-          
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <Input
-              label="Email Address *"
-              type="email"
-              value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              required
-            />
-            
-            <Input
-              label="Phone Number"
-              type="tel"
-              value={formData.phone}
-              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-              placeholder="+61 4XX XXX XXX"
-            />
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-foreground mb-2">
-              Subject *
-            </label>
-            <select
-              value={formData.subject}
-              onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-              className="w-full px-4 py-3 border border-border rounded-lg focus:ring-2 focus:ring-accent focus:border-accent"
-              required
-            >
-              {subjects.map((subject) => (
-                <option key={subject.value} value={subject.value}>
-                  {subject.label}
-                </option>
-              ))}
-            </select>
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-foreground mb-2">
-              Message *
-            </label>
-            <textarea
-              value={formData.message}
-              onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-              rows={8}
-              className="w-full px-4 py-3 border border-border rounded-lg focus:ring-2 focus:ring-accent focus:border-accent"
-              placeholder="Tell us about your requirements, timeline, or any questions you have..."
-              required
-            />
-          </div>
-          
-          <Button 
-            type="submit" 
-            className="w-full"
-            disabled={isSubmitting || !formData.name || !formData.email || !formData.message}
-          >
-            {isSubmitting ? (
-              <>Sending Message...</>
-            ) : (
-              <>
-                <Send className="h-4 w-4 mr-2" />
-                Send Message
-              </>
+        )}
+
+        <div className="relative">
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <Input
+                label="Your Name *"
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                required
+                disabled={isSubmitting}
+              />
+              <Input
+                label="Club/Organisation *"
+                value={formData.club}
+                onChange={(e) => setFormData({ ...formData, club: e.target.value })}
+                required
+                placeholder="iGripps FC"
+                disabled={isSubmitting}
+              />
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <Input
+                label="Email Address *"
+                type="email"
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                required
+                disabled={isSubmitting}
+              />
+              <Input
+                label="Phone Number"
+                type="tel"
+                value={formData.phone}
+                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                placeholder="+61 4XX XXX XXX"
+                disabled={isSubmitting}
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-2">Subject *</label>
+              <select
+                value={formData.subject}
+                onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
+                className="w-full px-4 py-3 border border-border rounded-lg focus:ring-2 focus:ring-accent focus:border-accent disabled:opacity-50 disabled:cursor-not-allowed"
+                required
+                disabled={isSubmitting}
+              >
+                {subjects.map((subject) => (
+                  <option key={subject.value} value={subject.value}>
+                    {subject.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-2">Message *</label>
+              <textarea
+                value={formData.message}
+                onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                rows={8}
+                className="w-full px-4 py-3 border border-border rounded-lg focus:ring-2 focus:ring-accent focus:border-accent disabled:opacity-50 disabled:cursor-not-allowed"
+                placeholder="Tell us about your requirements, timeline, or any questions you have..."
+                required
+                disabled={isSubmitting}
+              />
+            </div>
+
+            {errorMessage && (
+              <div className="text-red-600 text-sm flex items-center gap-2">
+                <AlertTriangle className="h-4 w-4" />
+                <span>{errorMessage}</span>
+              </div>
             )}
-          </Button>
-        </form>
+
+            <Button
+              type="submit"
+              className="w-full"
+              disabled={isSubmitting || !formData.name || !formData.email || !formData.message}
+            >
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Sending Message...
+                </>
+              ) : (
+                <>
+                  <Send className="h-4 w-4 mr-2" />
+                  Send Message
+                </>
+              )}
+            </Button>
+          </form>
+        </div>
       </CardContent>
     </Card>
   );

@@ -39,9 +39,9 @@ function PartnerCard({ partner }: { partner: Partner }) {
             {partner.name}
           </h3>
           
-          <blockquote className="text-gray-600 text-sm mb-3 flex-1 italic">
-            "{testimonialPreview}"
-          </blockquote>
+          <p className="text-gray-600 text-sm mb-3 flex-1">
+            {testimonialPreview}
+          </p>
 
           {/* Attribution */}
           <div className="text-xs text-gray-500 border-t border-gray-100 pt-3">

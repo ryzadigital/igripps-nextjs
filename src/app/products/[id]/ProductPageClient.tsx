@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
-import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
+import { ChevronLeftIcon, ChevronRightIcon, ArrowRightIcon, UserGroupIcon } from '@heroicons/react/24/outline';
 import { SockProduct } from '@/lib/contentful';
 
 // Image Carousel Component
@@ -161,7 +161,7 @@ export default function ProductPageClient({ product }: ProductPageClientProps) {
             <div className="border-t border-b border-gray-200 py-4">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-3xl font-bold text-gray-900">
-                  ${product.price.toFixed(2)}
+                 From ${product.price.toFixed(2)}*
                 </span>
                 {product.soldOut && (
                   <span className="bg-red-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
@@ -206,39 +206,41 @@ export default function ProductPageClient({ product }: ProductPageClientProps) {
 
           {/* Action Buttons - Pinned to bottom */}
           <div className="pt-4 space-y-3">
-            {/* Get A Quote Button */}
-            {product.soldOut ? (
-              <button
-                disabled
-                className="w-full bg-gray-300 text-gray-500 py-3 px-6 rounded-lg font-semibold cursor-not-allowed"
-              >
-                Currently Sold Out
-              </button>
-            ) : (
-              <Link
-                href="/contact"
-                className="block w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-6 rounded-lg font-semibold transition-colors text-center"
-              >
-                Get A Quote
+            <div className="flex flex-col sm:flex-row gap-4">
+              {/* Get A Quote Button */}
+              {product.soldOut ? (
+                <button
+                  disabled
+                  className="w-full sm:w-auto bg-gray-300 text-gray-500 px-8 py-4 rounded-lg font-semibold text-lg cursor-not-allowed"
+                >
+                  Currently Sold Out
+                </button>
+              ) : (
+                <Link href="/contact?subject=request-quote">
+                  <button className="w-full sm:w-auto border border-gray-600 hover:border-orange-500 px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-300 flex items-center justify-center hover:bg-orange-500/10">
+                    Get A Quote
+                    <UserGroupIcon className="ml-2 h-5 w-5" />
+                  </button>
+                </Link>
+              )}
+              
+              {/* Club Customiser Button */}
+              <Link href="/customise">
+                <button className="w-full sm:w-auto bg-orange-500 hover:bg-orange-600 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-300 flex items-center justify-center group shadow-lg hover:shadow-orange-500/25 transform hover:scale-105">
+                  Club Customiser
+                  <ArrowRightIcon className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform duration-300" />
+                </button>
               </Link>
-            )}
-            
-            {/* Customise Your Design Button */}
-            <Link
-              href="/customise"
-              className="block w-full bg-[#9EE624] hover:bg-[#8ED91A] text-[#202020] py-3 px-6 rounded-lg font-semibold transition-colors text-center"
-            >
-              Customise Your Design
-            </Link>
+            </div>
           </div>
 
           {/* Additional Info */}
           <div className="bg-gray-50 p-4 rounded-lg mt-4">
             <h4 className="font-semibold text-gray-900 mb-2">Ordering Information</h4>
             <ul className="text-sm text-gray-600 space-y-1">
-              <li>• Minimum order quantity: {product.minimumOrder} units</li>
+              <li>• Minimum order quantity: {product.minimumOrder} units.</li>
               <li>• Perfect for team orders and club purchases</li>
-              <li>• Contact us for bulk pricing and customization options</li>
+              <li>• *Contact us for bulk pricing and customisation options</li>
             </ul>
           </div>
         </div>

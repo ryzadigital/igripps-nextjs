@@ -70,13 +70,14 @@ function resolveAsset(assetId: string, assets: Asset[]): Asset | null {
 async function getProducts(): Promise<ContentfulResponse> {
   const spaceId = process.env.CONTENTFUL_SPACE_ID;
   const accessToken = process.env.CONTENTFUL_ACCESS_TOKEN;
+  const environment = process.env.CONTENTFUL_ENVIRONMENT || 'master';
   
   if (!spaceId || !accessToken) {
     throw new Error('Contentful configuration missing');
   }
 
   const response = await fetch(
-    `https://cdn.contentful.com/spaces/${spaceId}/entries?content_type=products&include=2`,
+    `https://cdn.contentful.com/spaces/${spaceId}/environments/${environment}/entries?content_type=products&include=2`,
     {
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -98,7 +99,7 @@ export default async function ProductsPage() {
     const { items, includes } = data;
     const assets = includes?.Asset || [];
     
-    // Sort manually in JS by price
+    // Sort by price (lowest to highest)
     const products = items.sort((a, b) => a.fields.price - b.fields.price);
 
     return (
@@ -157,7 +158,7 @@ export default async function ProductsPage() {
 
                       <div className="flex items-center justify-between">
                         <span className="text-lg font-bold text-gray-900">
-                          ${product.fields.price.toFixed(2)}
+                          From ${product.fields.price.toFixed(2)}
                         </span>
                         
                         <span className="text-xs text-gray-500">

@@ -91,7 +91,7 @@ export function FeaturesSection() {
                   href="/customise"
                   className="bg-accent hover:bg-accent-dark text-secondary px-6 py-3 rounded-lg font-medium transition-colors text-center"
                 >
-                  Customise Now
+                  Club Customiser
                 </Link>
                 <Link 
                   href="/contact"

@@ -5,7 +5,7 @@ import { notFound } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
 import { getPartnerBySlug, getPartners } from '@/lib/contentful';
 import ProductGallery from '@/components/ui/ProductGallery';
-import ContactForm from '@/components/ui/ContactForm';
+import { CTASection } from '@/components/home/CTASection';
 
 // Generate static params for static generation
 export async function generateStaticParams() {
@@ -73,9 +73,9 @@ export default async function PartnerPage({ params }: PageProps) {
 
         {/* Testimonial Section */}
         <div className="bg-white rounded-lg shadow-md border border-gray-200 p-8 mb-8">
-          <blockquote className="text-lg leading-relaxed text-gray-800 mb-6">
+          <p className="text-lg leading-relaxed text-gray-800 mb-6">
             {partner.testimonial}
-          </blockquote>
+          </p>
           
           {/* Attribution */}
           <div className="border-t border-gray-200 pt-6">
@@ -117,12 +117,8 @@ export default async function PartnerPage({ params }: PageProps) {
           </div>
         )}
 
-        {/* Contact Form */}
-        <ContactForm 
-          title="Interested in becoming a partner?"
-          subtitle={`Experience the same quality and service that ${partner.name} enjoys. Contact us to discuss your club's requirements.`}
-          partnerName={partner.name}
-        />
+        {/* CTA Section */}
+        <CTASection />
       </div>
     </div>
   );

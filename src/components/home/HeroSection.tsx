@@ -72,18 +72,13 @@ export function HeroSection({ galleryData }: HeroSectionProps) {
             
             {/* Order Badge */}
             <div className="inline-flex items-center space-x-2 border border-orange-500 rounded-full px-4 py-2">
-              <div className="flex space-x-1">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="h-3 w-3 text-orange-500 fill-orange-500" />
-                ))}
-              </div>
-              <span className="text-sm font-medium">ORDER NOW FOR THE 2026 SEASON</span>
+                          <span className="text-sm font-medium">ORDER NOW FOR THE 2026 SEASON</span>
             </div>
 
             {/* Main Heading */}
             <div>
               <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold leading-tight">
-                <span className="block text-orange-500 mb-2">#StayGrounded</span>
+                <span className="block text-orange-500 mb-2">Stay Grounded.</span>
                 <span className="block text-3xl sm:text-4xl lg:text-5xl font-normal">
                   iGripps Football Socks
                 </span>
@@ -105,7 +100,7 @@ export function HeroSection({ galleryData }: HeroSectionProps) {
               <div className="flex flex-col sm:flex-row gap-4">
                 <Link href="/customise" className="flex-1 sm:flex-none">
                   <button className="w-full sm:w-auto bg-orange-500 hover:bg-orange-600 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-300 flex items-center justify-center group shadow-lg hover:shadow-orange-500/25 transform hover:scale-105">
-                    Customise Now
+                    Club Customiser
                     <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform duration-300" />
                   </button>
                 </Link>

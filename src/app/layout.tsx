@@ -3,6 +3,7 @@ import { Inter, Poppins } from 'next/font/google';
 import './globals.css';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
+import Script from 'next/script';
 
 const inter = Inter({ 
   subsets: ['latin'],
@@ -35,6 +36,9 @@ export const metadata: Metadata = {
   },
 };
 
+// Replace with your actual Google Analytics Measurement ID
+const GA_MEASUREMENT_ID = 'G-DPD1ZTP8BS';
+
 export default function RootLayout({
   children,
 }: {
@@ -47,6 +51,23 @@ export default function RootLayout({
         <meta name="theme-color" content="#d1f286" />
       </head>
       <body className="font-sans bg-background text-foreground antialiased">
+        {/* Google Analytics */}
+        <Script
+          src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '${GA_MEASUREMENT_ID}', {
+              page_title: document.title,
+              page_location: window.location.href,
+            });
+          `}
+        </Script>
+
         <div className="min-h-screen flex flex-col">
           <Header />
           <main className="flex-1">
