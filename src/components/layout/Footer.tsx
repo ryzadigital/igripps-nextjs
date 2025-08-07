@@ -114,7 +114,7 @@ export function Footer() {
               height={150}
               className="invert brightness-0"
             />
-            <p className="text-sm mt-2 text-primary/80">Stay Grounded</p>
+            <p className="text-sm mt-2 text-primary/80"></p>
             <div className="w-full border-t border-primary/20 mt-4" />
           </div>
 
